@@ -1,23 +1,16 @@
-from Utils import translate_dimacs_graph
+from Utils import translate_dimacs_graph,colors
 from Genetic import Genetic
 import networkx as nx
 import matplotlib.pyplot as plt
-import random
-
-pathname='./instances/myciel3.col'
+from config import PATHNAME
 
 
 
-def colors(colors_size):
-     colors = []
 
-     for i in range(colors_size):
-          color = "#"+''.join([random.choice('ABCDEF0123456789') for i in range(6)])
-          colors.append(color)
-     return colors 
      
 if __name__ =='__main__':
-     graph = translate_dimacs_graph(pathname=pathname)
+     graph = translate_dimacs_graph(pathname=PATHNAME)
+
      ga = Genetic(graph)
      pop = ga.initialize_pop()
      bs = ga.run()
@@ -27,7 +20,7 @@ if __name__ =='__main__':
 
      colored_sol = []
      for i,element in enumerate(bs.solution):
-          print("node: " ,i+1, "as color:", colors[element-1])
+          # print("node: " ,i+1, "as color:", colors[element-1])
           colored_sol.append(colors[element-1])
 
 

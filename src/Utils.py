@@ -1,5 +1,5 @@
 from Graph import Graph,Vertex
-
+import random
 
 # This method allow to convert dimacs standard on Graph class 
 def translate_dimacs_graph(pathname):
@@ -29,6 +29,14 @@ def translate_dimacs_graph(pathname):
 
     return graph        
 
+
+def colors(colors_size):
+     colors = []
+
+     for i in range(colors_size):
+          color = "#"+''.join([random.choice('ABCDEF0123456789') for i in range(6)])
+          colors.append(color)
+     return colors 
 
 
        

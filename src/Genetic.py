@@ -2,7 +2,7 @@ from Graph import Graph,Vertex
 from Individual import Individual
 import random
 import numpy as np
-from config import POPULATION_SIZE,TOUR_SIZE,SELECTION_MODE,CROSS_PROBABILITY,MUTATION_PROBABILITY,MAX_NUM_VALUTATIONS
+from config import POPULATION_SIZE,TOUR_SIZE,SELECTION_MODE,CROSS_PROBABILITY,MUTATION_PROBABILITY,MAX_NUM_VALUTATIONS,CROSSOVER_TYPE
 class Genetic:
     def __init__(self, graph:Graph):
         self.graph = graph
@@ -15,14 +15,17 @@ class Genetic:
         random.seed()
         count = 0
         while len(self.population) < POPULATION_SIZE:
-            colors = [i+1 for i in range(len(vertex))]
+            colors = [ i+1 for i in range(len(vertex))]
             sol = []
             for i in range (len(vertex)):
                 color = random.choice(colors)
                 sol.append(color)
             if(self.is_valid(sol)):
-                self.population.append(Individual(solution=sol))
+                ind = Individual(solution=sol)
+                self.population.append(ind)
                 count = count + 1
+                print("count:",ind.solution , ' - ', ind.fitness)
+            
 
         return self.population
     
@@ -72,14 +75,33 @@ class Genetic:
 
                     # Crossover
                     if(random.random() <= CROSS_PROBABILITY):
-                        # ----------------------------------------------------------------------
-                        # 1-Point Crossover
-                        # ----------------------------------------------------------------------
-                        p = random.randint(0, 23)
-                        c = Individual(a.solution[0:(p + 1)] + b.solution[(p + 1):])
-                        fitness_counter += 1
-                        d = Individual(b.solution[0:(p + 1)] + a.solution[(p + 1):])
-                        fitness_counter
+                        VERTEX_NUMBER = self.graph.number_of_vertex
+                   
+                        if(CROSSOVER_TYPE =='1-point'):
+                            # ----------------------------------------------------------------------
+                            # 1-Point Crossover
+                            # ----------------------------------------------------------------------
+                            p = random.randint(0, VERTEX_NUMBER - 2)
+                          
+
+                            c = Individual(a.solution[0:(p + 1)] + b.solution[(p + 1):])
+                            print("C",c.solution,"\n")
+                            fitness_counter += 1
+                            d = Individual(b.solution[0:(p + 1)] + a.solution[(p + 1):])
+                            fitness_counter+=1
+                            print("D",d.solution)
+                        
+                        if(CROSSOVER_TYPE=='2-point'):
+                            # 2-Point Crossover
+				            # ----------------------------------------------------------------------
+                            p1 = random.randint(0, VERTEX_NUMBER - 3)
+                            p2 = random.randint(p1 + 1, VERTEX_NUMBER - 2)
+                            c = Individual(a.solution[0:(p1 + 1)] + b.solution[(p1 + 1):(p2 + 1)] + a.solution[(p2 + 1):])
+                            d = Individual(b.solution[0:(p1 + 1)] + a.solution[(p1 + 1):(p2 + 1)] + b.solution[(p2 + 1):])
+                           
+
+
+
                     else:
                         c = a
                         d = b
