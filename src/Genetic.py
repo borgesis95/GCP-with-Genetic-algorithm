@@ -23,8 +23,9 @@ class Genetic:
                 sol.append(color)
 
             ind = Individual(solution=sol)
+            ind.fitness  = fitness(self.graph,sol)
+
             self.population.append(ind)
-            fitness(self.graph,ind)
             count = count + 1
             
 
@@ -45,7 +46,7 @@ class Genetic:
         instance_t = 0
         fitness_counter = 0
 
-        absolute_best_solution  = Individual(list(range(1,self.graph.number_of_vertex+1)))
+        absolute_best_solution  = 0
 
 
         while(not self.stop):
@@ -59,6 +60,8 @@ class Genetic:
                         # with probability proportional to the fitness value of the individuals.
                         # --------------------------------------------------------------------------
                         a,b = random.choices(self.population,[i.fitness for i in self.population], k=2)
+                        a.fitness = fitness(self.graph,a.solution)
+                        b.fitness = fitness(self.graph,a.solution)
 
                     if(SELECTION_MODE =='tournament'):
                         # --------------------------------------------------------------------------
@@ -67,12 +70,18 @@ class Genetic:
                         # --------------------------------------------------------------------------
                         a = min(random.sample(self.population, TOUR_SIZE), key = lambda i :i.fitness)
                         b = min(random.sample(self.population, TOUR_SIZE), key = lambda i: i.fitness)
+                        a.fitness = fitness(self.graph,a.solution)
+                        b.fitness = fitness(self.graph,a.solution)
 
                     if(SELECTION_MODE =='random'):
                         # --------------------------------------------------------------------------
                         # Random Selection: choose two random parents from the population.
                         # --------------------------------------------------------------------------
                         a, b = random.sample(self.population, 2)
+                        
+                        a.fitness = fitness(self.graph,a.solution)
+                        b.fitness = fitness(self.graph,a.solution)
+
 
                     # Crossover
                     if(random.random() <= CROSS_PROBABILITY):
@@ -86,11 +95,11 @@ class Genetic:
                           
 
                             c = Individual(a.solution[0:(p + 1)] + b.solution[(p + 1):])
-                            print("C",c.solution,"\n")
-                            fitness_counter += 1
+                            c.fitness = fitness(self.graph,c.solution)
+                            # fitness_counter += 1
                             d = Individual(b.solution[0:(p + 1)] + a.solution[(p + 1):])
-                            fitness_counter+=1
-                            print("D",d.solution)
+                            d.fitness = fitness(self.graph,d.solution)
+                            # fitness_counter+=1
                         
                         if(CROSSOVER_TYPE=='2-point'):
                             # 2-Point Crossover
@@ -99,21 +108,18 @@ class Genetic:
                             p2 = random.randint(p1 + 1, VERTEX_NUMBER - 2)
                             c = Individual(a.solution[0:(p1 + 1)] + b.solution[(p1 + 1):(p2 + 1)] + a.solution[(p2 + 1):])
                             d = Individual(b.solution[0:(p1 + 1)] + a.solution[(p1 + 1):(p2 + 1)] + b.solution[(p2 + 1):])
-                           
-
-
-
+                        
                     else:
                         c = a
                         d = b
 
                     # TODO: to implement mutation
-                    if (self.is_valid(c.solution)):
-                        population_t.append(c)
+                    population_t.append(c)
                   
 
-                    if(self.is_valid(d.solution)):
-                        population_t.append(d)
+                    population_t.append(d)
+                    fitness_counter+=1
+                    
     
 
             # ------------------------------------------------------------------------------
@@ -125,17 +131,23 @@ class Genetic:
             std_fitness = np.std([i.fitness for i in self.population])
             best_fitness = min([i.fitness for i in self.population]) 
             
-            # print('{0}\t{1}\t{2:.3f}\t{3:.3f}'.format(instance_t, best_fitness, mean_fitness, std_fitness))
+
+            print('{0}\t{1}\t{2:.3f}\t{3:.3f}'.format(instance_t, best_fitness, mean_fitness, std_fitness))
 
             best_solution = sorted(self.population, key = lambda i: i.fitness, reverse=False)[0]
-            if best_solution.fitness < absolute_best_solution.fitness:
-                absolute_best_solution = best_solution
+            if(best_solution.fitness == 0) :          
+                print("best solution",best_solution.solution)
+                return best_solution
+
+            if best_solution.fitness < absolute_best_solution:
+                absolute_best_solution = best_solution.fitness
                 evaluations = fitness_counter
 
             if(fitness_counter > MAX_NUM_VALUTATIONS):
+                print("stop",fitness_counter)
                 self.stop = True
              
-            print("iteration: ",instance_t, " - The best solution is finded at", evaluations, "is:", absolute_best_solution.solution,"with fitness: ",absolute_best_solution.fitness)
+            # print("iteration: ",instance_t, " - The best solution is finded at", evaluations, "is:", absolute_best_solution.solution,"with fitness: ",absolute_best_solution.fitness)
         return absolute_best_solution
 
                 

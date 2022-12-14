@@ -41,13 +41,10 @@ def colors(colors_size):
      return colors 
 
 
-def fitness(graph:Graph,individual :Individual):
-    
-    print("solution",individual.solution)
-    print("edges",graph.edges)
+def fitness(graph:Graph,solution):
     count = 0
     for u,v in graph.edges:
-        if individual.solution[u-1] == individual.solution[v-1]:
+        if solution[u-1] == solution[v-1]:
             count+=1
 
     return count
