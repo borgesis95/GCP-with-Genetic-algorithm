@@ -5,21 +5,18 @@ import matplotlib.pyplot as plt
 from config import PATHNAME
 
 
-
-
      
 if __name__ =='__main__':
      graph = translate_dimacs_graph(pathname=PATHNAME)
 
      ga = Genetic(graph)
      pop = ga.initialize_pop()
-     print("pop",pop[0].solution)
-     # bs = ga.run()
+     bs = ga.run()
      colors = colors(graph.number_of_vertex)
 
 
      colored_sol = []
-     for i,element in enumerate(pop[0].solution):
+     for i,element in enumerate(bs.solution):
           # print("node: " ,i+1, "as color:", colors[element-1])
           colored_sol.append(colors[element-1])
 
