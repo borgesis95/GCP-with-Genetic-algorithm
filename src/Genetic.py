@@ -2,7 +2,8 @@ from Graph import Graph,Vertex
 from Individual import Individual
 import random
 import numpy as np
-from config import POPULATION_SIZE,TOUR_SIZE,SELECTION_MODE,CROSS_PROBABILITY,MUTATION_PROBABILITY,MAX_NUM_VALUTATIONS,CROSSOVER_TYPE
+from Utils import fitness
+from config import POPULATION_SIZE,TOUR_SIZE,SELECTION_MODE,CROSS_PROBABILITY,MUTATION_PROBABILITY,MAX_NUM_VALUTATIONS,CROSSOVER_TYPE,COLOR_NUMBER
 class Genetic:
     def __init__(self, graph:Graph):
         self.graph = graph
@@ -15,16 +16,16 @@ class Genetic:
         random.seed()
         count = 0
         while len(self.population) < POPULATION_SIZE:
-            colors = [ i+1 for i in range(len(vertex))]
+            colors = [ i+1 for i in range(COLOR_NUMBER)]
             sol = []
             for i in range (len(vertex)):
                 color = random.choice(colors)
                 sol.append(color)
-            if(self.is_valid(sol)):
-                ind = Individual(solution=sol)
-                self.population.append(ind)
-                count = count + 1
-                print("count:",ind.solution , ' - ', ind.fitness)
+
+            ind = Individual(solution=sol)
+            self.population.append(ind)
+            fitness(self.graph,ind)
+            count = count + 1
             
 
         return self.population

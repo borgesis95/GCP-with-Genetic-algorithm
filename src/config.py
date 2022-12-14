@@ -1,6 +1,7 @@
 
-PATHNAME ='./instances/queen5_5.col'
-POPULATION_SIZE = 50
+PATHNAME ='./instances/myciel3.col'
+POPULATION_SIZE = 4
+COLOR_NUMBER = 4
 # Tournament size
 TOUR_SIZE = 5
 # Crossover prob

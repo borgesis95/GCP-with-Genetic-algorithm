@@ -13,13 +13,13 @@ if __name__ =='__main__':
 
      ga = Genetic(graph)
      pop = ga.initialize_pop()
-     bs = ga.run()
+     print("pop",pop[0].solution)
+     # bs = ga.run()
      colors = colors(graph.number_of_vertex)
-     print("bs.solution",bs.solution)
-     print("colors",colors)
+
 
      colored_sol = []
-     for i,element in enumerate(bs.solution):
+     for i,element in enumerate(pop[0].solution):
           # print("node: " ,i+1, "as color:", colors[element-1])
           colored_sol.append(colors[element-1])
 

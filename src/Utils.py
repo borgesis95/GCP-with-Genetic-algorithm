@@ -1,5 +1,7 @@
 from Graph import Graph,Vertex
+from Individual import Individual
 import random
+
 
 # This method allow to convert dimacs standard on Graph class 
 def translate_dimacs_graph(pathname):
@@ -39,6 +41,15 @@ def colors(colors_size):
      return colors 
 
 
-       
+def fitness(graph:Graph,individual :Individual):
+    
+    print("solution",individual.solution)
+    print("edges",graph.edges)
+    count = 0
+    for u,v in graph.edges:
+        if individual.solution[u-1] == individual.solution[v-1]:
+            count+=1
+
+    return count
 
     
