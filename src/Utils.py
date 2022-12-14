@@ -16,12 +16,15 @@ def translate_dimacs_graph(pathname):
                 # Vertex creation
                 for index in range(number_of_vertex):
                      graph.vertices.append(Vertex(index+1))
-
+                     graph.nx.add_node(str(index+1))
+                  
             if line.split()[0] =='e':
                 u = int(line.split()[1])
                 v = int(line.split()[2])
 
                 graph.edges.append((u,v))
+                graph.nx.add_edge(str(u),str(v))
+                
                 graph.vertices[u-1].neighbors.append(v)
 
     return graph        

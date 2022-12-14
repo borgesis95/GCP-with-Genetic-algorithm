@@ -1,3 +1,4 @@
+import networkx as nx
 
 
 class Vertex:
@@ -14,4 +15,9 @@ class Graph:
         self.edges = []
         self.number_of_vertex = 0
         self.number_of_edges = 0
+        self.nx = nx.Graph()
+
+
+   
+
 
