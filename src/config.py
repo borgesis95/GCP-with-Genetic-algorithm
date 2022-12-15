@@ -1,18 +1,17 @@
 
-PATHNAME ='./instances/queen5_5.col'
+PATHNAME ='./instances/queen8_8.col'
 POPULATION_SIZE = 100
-COLOR_NUMBER = 6
+COLOR_NUMBER = 40
 # Tournament size
-TOUR_SIZE = 10
+TOUR_SIZE = 30
 # Crossover prob
 CROSS_PROBABILITY = 0.9
 # Mutation prob
-MUTATION_PROBABILITY = 0.1
+MUTATION_PROBABILITY = 0.4
 #Replacement U + lambda probability
+REPLACEMENT_PROBABILITY = 0.3
 
-REPLACEMENT_PROBABILITY = 0.1
-
-MAX_NUM_VALUTATIONS = 5*(10**6)
+MAX_NUM_VALUTATIONS = 5*(10**3)
 
 
 # Value that allow user to select selection's type between : Tournament,Random and Roulette

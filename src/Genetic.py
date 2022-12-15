@@ -5,18 +5,19 @@ import numpy as np
 from Utils import fitness
 from config import POPULATION_SIZE,TOUR_SIZE,SELECTION_MODE,CROSS_PROBABILITY,MUTATION_PROBABILITY,REPLACEMENT_PROBABILITY, MAX_NUM_VALUTATIONS,CROSSOVER_TYPE,COLOR_NUMBER
 class Genetic:
-    def __init__(self, graph:Graph):
+    def __init__(self, graph:Graph,colorSize :int):
         self.graph = graph
         self.population = []
         self.stop = False
+        self.colorSize = colorSize
 
 
-    def initialize_pop(self):
+    def generatePopulation(self):
         vertex = self.graph.vertices
         random.seed()
         count = 0
         while len(self.population) < POPULATION_SIZE:
-            colors = [ i+1 for i in range(COLOR_NUMBER)]
+            colors = [ i+1 for i in range(self.colorSize)]
             sol = []
             for i in range (len(vertex)):
                 color = random.choice(colors)
@@ -32,22 +33,21 @@ class Genetic:
         return self.population
     
                 
-    def is_valid(self,individual):
+    def isColoringValid(self,individual):
          edges = self.graph.edges
-     
          return all(self.color(u, individual) != self.color(v, individual)  for u, v in edges)
 
     def color(self,vertex,individual):
         for index,c in enumerate(individual):
-            if vertex == index+1:
+            if vertex == index + 1:
                 return c
 
-    def run(self):
+    def run(self,):
+        print("RUN numero")
+        self.generatePopulation()
         instance_t = 0
         fitness_counter = 0
-
         absolute_best_solution  = 0
-
 
         while(not self.stop):
             population_t = []
@@ -96,10 +96,8 @@ class Genetic:
 
                             c = Individual(a.solution[0:(p + 1)] + b.solution[(p + 1):])
                             c.fitness = fitness(self.graph,c.solution)
-                            # fitness_counter += 1
                             d = Individual(b.solution[0:(p + 1)] + a.solution[(p + 1):])
                             d.fitness = fitness(self.graph,d.solution)
-                            # fitness_counter+=1
                         
                         if(CROSSOVER_TYPE=='2-point'):
                             # 2-Point Crossover
@@ -119,11 +117,11 @@ class Genetic:
 
                     if (random.random() <=MUTATION_PROBABILITY):
                         pos = random.randint(0,VERTEX_NUMBER -1)
-                        c.solution[pos] = random.randint(1,COLOR_NUMBER)
+                        c.solution[pos] = random.randint(1,self.colorSize)
 
                     if (random.random() <=MUTATION_PROBABILITY):
                         pos = random.randint(0,VERTEX_NUMBER -1)
-                        d.solution[pos] = random.randint(1,COLOR_NUMBER)
+                        d.solution[pos] = random.randint(1,self.colorSize)
 
                     population_t.append(c)
                     population_t.append(d)
@@ -146,19 +144,22 @@ class Genetic:
             best_fitness = min([i.fitness for i in self.population]) 
             
 
-            print('{0}\t{1}\t{2:.3f}\t{3:.3f}'.format(instance_t, best_fitness, mean_fitness, std_fitness))
+            print('{0}\t {0}\t{1}\t{2:.3f}\t{3:.3f}'.format(fitness_counter,instance_t, best_fitness, mean_fitness, std_fitness))
 
             best_solution = sorted(self.population, key = lambda i: i.fitness, reverse=False)[0]
-            if(best_solution.fitness == 0) :          
-                return best_solution
+            if(best_solution.fitness == 0) :    
+                print("Trovata soluzione con numero di colori pari a :",self.colorSize)
+                print("solution",best_solution.solution)  
+                return (best_solution,True)
 
             if best_solution.fitness < absolute_best_solution:
                 absolute_best_solution = best_solution.fitness
                 evaluations = fitness_counter
 
             if(fitness_counter > MAX_NUM_VALUTATIONS):
-                print("stop",fitness_counter)
+                print("stop qui",fitness_counter)
                 self.stop = True
+                return(-1,False)
              
             # print("iteration: ",instance_t, " - The best solution is finded at", evaluations, "is:", absolute_best_solution.solution,"with fitness: ",absolute_best_solution.fitness)
         return absolute_best_solution
