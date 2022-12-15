@@ -26,8 +26,8 @@ if __name__ =='__main__':
      stop = False
      count = 10
      best_sol = []
-     # lower_bound =  int(start_color_size/4) 
-     lower_bound = 5 
+     lower_bound =  int(start_color_size/4) 
+     # lower_bound = 5 
 
      print("LOWER BOUND",lower_bound)
      while(ga.colorSize >= lower_bound):
@@ -40,9 +40,7 @@ if __name__ =='__main__':
                     ga.colorSize = ga.colorSize-1
           if(isValid == False):
                break
-               # continue
-         
-          # count = count-1
+               
      
 
      print("la soluzione trovata ha un numero di colori pari a ",ga.colorSize)
