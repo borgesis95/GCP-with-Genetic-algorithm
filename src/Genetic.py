@@ -3,7 +3,7 @@ from Individual import Individual
 import random
 import numpy as np
 from Utils import fitness
-from config import POPULATION_SIZE,TOUR_SIZE,SELECTION_MODE,CROSS_PROBABILITY,MUTATION_PROBABILITY,MAX_NUM_VALUTATIONS,CROSSOVER_TYPE,COLOR_NUMBER
+from config import POPULATION_SIZE,TOUR_SIZE,SELECTION_MODE,CROSS_PROBABILITY,MUTATION_PROBABILITY,REPLACEMENT_PROBABILITY, MAX_NUM_VALUTATIONS,CROSSOVER_TYPE,COLOR_NUMBER
 class Genetic:
     def __init__(self, graph:Graph):
         self.graph = graph
@@ -82,10 +82,10 @@ class Genetic:
                         a.fitness = fitness(self.graph,a.solution)
                         b.fitness = fitness(self.graph,a.solution)
 
+                    VERTEX_NUMBER = self.graph.number_of_vertex
 
                     # Crossover
                     if(random.random() <= CROSS_PROBABILITY):
-                        VERTEX_NUMBER = self.graph.number_of_vertex
                    
                         if(CROSSOVER_TYPE =='1-point'):
                             # ----------------------------------------------------------------------
@@ -113,10 +113,19 @@ class Genetic:
                         c = a
                         d = b
 
-                    # TODO: to implement mutation
-                    population_t.append(c)
-                  
+                    # ------------------------------------------------------------------------------
+                    # Mutation
+                    # ------------------------------------------------------------------------------
 
+                    if (random.random() <=MUTATION_PROBABILITY):
+                        pos = random.randint(0,VERTEX_NUMBER -1)
+                        c.solution[pos] = random.randint(1,COLOR_NUMBER)
+
+                    if (random.random() <=MUTATION_PROBABILITY):
+                        pos = random.randint(0,VERTEX_NUMBER -1)
+                        d.solution[pos] = random.randint(1,COLOR_NUMBER)
+
+                    population_t.append(c)
                     population_t.append(d)
                     fitness_counter+=1
                     
@@ -126,7 +135,12 @@ class Genetic:
             # Generational Selection: the offspring population replaces the current
             # population.
             # ------------------------------------------------------------------------------
-            self.population = population_t
+
+            if(random.random() <= REPLACEMENT_PROBABILITY):
+                self.population = sorted(self.population + population_t, key = lambda i: i.fitness, reverse = True)[0:POPULATION_SIZE]
+            else:
+                self.population = population_t
+
             mean_fitness = sum([i.fitness for i in self.population]) / POPULATION_SIZE
             std_fitness = np.std([i.fitness for i in self.population])
             best_fitness = min([i.fitness for i in self.population]) 
@@ -136,7 +150,6 @@ class Genetic:
 
             best_solution = sorted(self.population, key = lambda i: i.fitness, reverse=False)[0]
             if(best_solution.fitness == 0) :          
-                print("best solution",best_solution.solution)
                 return best_solution
 
             if best_solution.fitness < absolute_best_solution:

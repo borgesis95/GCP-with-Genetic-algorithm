@@ -1,18 +1,21 @@
 
-PATHNAME ='./instances/myciel3.col'
+PATHNAME ='./instances/queen5_5.col'
 POPULATION_SIZE = 100
-COLOR_NUMBER = 2
+COLOR_NUMBER = 6
 # Tournament size
-TOUR_SIZE = 5
+TOUR_SIZE = 10
 # Crossover prob
 CROSS_PROBABILITY = 0.9
 # Mutation prob
 MUTATION_PROBABILITY = 0.1
+#Replacement U + lambda probability
 
-MAX_NUM_VALUTATIONS = 5*(10**4)
+REPLACEMENT_PROBABILITY = 0.1
+
+MAX_NUM_VALUTATIONS = 5*(10**6)
 
 
 # Value that allow user to select selection's type between : Tournament,Random and Roulette
-SELECTION_MODE = 'random';
+SELECTION_MODE = 'tournament';
 
 CROSSOVER_TYPE = '1-point'
