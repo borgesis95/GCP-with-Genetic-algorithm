@@ -1,10 +1,10 @@
-from Graph import Graph,Vertex
+from Graph import Graph
 from Individual import Individual
 import random
 import numpy as np
 from numpy import unique
-from Utils import fitness
-from config import POPULATION_SIZE,TOUR_SIZE,SELECTION_MODE,CROSS_PROBABILITY,MUTATION_PROBABILITY,REPLACEMENT_PROBABILITY, MAX_NUM_VALUTATIONS,CROSSOVER_TYPE,COLOR_NUMBER
+from Utils import fitness,randomMutation,edgesMutation
+from config import MUTATION_TYPE,POPULATION_SIZE,TOUR_SIZE,SELECTION_MODE,CROSS_PROBABILITY,MUTATION_PROBABILITY,REPLACEMENT_PROBABILITY, MAX_NUM_VALUTATIONS,CROSSOVER_TYPE
 class Genetic:
     def __init__(self, graph:Graph,colorSize :int):
         self.graph = graph
@@ -48,8 +48,7 @@ class Genetic:
         instance_t = 0
         fitness_counter = 0
         absolute_best_solution  = Individual()
-        absolute_best_solution.fitness = 10000
-        besties_solutions = []
+        absolute_best_solution.fitness = 10000000
 
 
         while(not self.stop):
@@ -82,7 +81,6 @@ class Genetic:
                         # Random Selection: choose two random parents from the population.
                         # --------------------------------------------------------------------------
                         a, b = random.sample(self.population, 2)
-                        print("a",a) 
                         a.fitness = fitness(self.graph,a.solution)
                         b.fitness = fitness(self.graph,a.solution)
 
@@ -119,7 +117,7 @@ class Genetic:
                     # Mutation
                     # ------------------------------------------------------------------------------
                     mean_fitness = sum([i.fitness for i in self.population]) / POPULATION_SIZE
-
+                   
                     if(mean_fitness <=10 and self.colorSize > 4) :
                         # Remove random color --
                         randColToRemove = random.randint(1,self.colorSize-1)
@@ -132,25 +130,23 @@ class Genetic:
                         
                         for i,element in enumerate(d.solution):
                             if(element == randColToRemove):
-                                element = randColToReplace
-
-                        
+                                element = randColToReplace  
                         self.colorSize = self.colorSize -1
-                        print("c.solution",c.solution)     
-                        print("colore diminiuto",self.colorSize)
+                      
 
 
-                        c.fitness = fitness(self.graph,c.solution)
-                        d.fitness = fitness(self.graph,d.solution)
 
 
                     if (random.random() <=MUTATION_PROBABILITY):
-                        pos = random.randint(0,VERTEX_NUMBER -1)
-                        c.solution[pos] = random.randint(1,self.colorSize)
+                        c=  edgesMutation(c,VERTEX_NUMBER,self.graph) if MUTATION_TYPE =='edge'  else randomMutation(c,VERTEX_NUMBER)
+                      
 
                     if (random.random() <=MUTATION_PROBABILITY):
-                        pos = random.randint(0,VERTEX_NUMBER -1)
-                        d.solution[pos] = random.randint(1,self.colorSize)
+                        d=  edgesMutation(d,VERTEX_NUMBER,self.graph) if MUTATION_TYPE =='edge'  else randomMutation(d,VERTEX_NUMBER)
+                      
+
+                    c.fitness = fitness(self.graph,c.solution)
+                    d.fitness = fitness(self.graph,d.solution)
 
                     population_t.append(c)
                     population_t.append(d)
@@ -186,9 +182,7 @@ class Genetic:
 
             if(fitness_counter > MAX_NUM_VALUTATIONS):
                 self.stop = True
-                # return(-1,False)
         
-        # print("final population",population_t)
 
         for i in population_t:
             print("popolazione",i.solution , " -- colori : ",len(unique(i.solution)),'fitness',i.fitness)

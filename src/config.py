@@ -11,10 +11,12 @@ MUTATION_PROBABILITY = 0.2
 #Replacement U + lambda probability
 REPLACEMENT_PROBABILITY = 0.1
 
-MAX_NUM_VALUTATIONS = 10*(10**4)
+MAX_NUM_VALUTATIONS = 10*(10**3)
 
 
 # Value that allow user to select selection's type between : Tournament,Random and Roulette
 SELECTION_MODE = 'tournament';
 
-CROSSOVER_TYPE = '1-point'
+CROSSOVER_TYPE = '2-point'
+
+MUTATION_TYPE ='edge'

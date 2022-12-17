@@ -51,4 +51,25 @@ def fitness(graph:Graph,solution):
 
     return count * solutionsColor
 
+
+def randomMutation(ind : Individual,vertexNumber : int):
+      pos = random.randint(0,vertexNumber -1)
+      colors = len(unique(ind.solution))
+      ind.solution[pos] = random.randint(1,colors)
+      return ind
+
+
+def edgesMutation(ind  : Individual,vertexNumber : int,graph: Graph):
+    pos = None
+    colors = len(unique(ind.solution))
+    for u,v in graph.edges:
+        if(ind.solution[u-1] == ind.solution[v-1]):
+            pos = v-1
+            break
+    if(pos != None):
+        ind.solution[pos] =  random.randint(1,colors) 
+    return ind
+
+
+
     
