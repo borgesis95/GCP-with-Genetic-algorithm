@@ -1,6 +1,7 @@
 from Graph import Graph,Vertex
 from Individual import Individual
 import random
+from numpy import unique
 
 
 # This method allow to convert dimacs standard on Graph class 
@@ -43,10 +44,11 @@ def colors(colors_size):
 
 def fitness(graph:Graph,solution):
     count = 0
+    solutionsColor = len(unique(solution))
     for u,v in graph.edges:
         if solution[u-1] == solution[v-1]:
             count+=1
 
-    return count
+    return count * solutionsColor
 
     

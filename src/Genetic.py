@@ -2,6 +2,7 @@ from Graph import Graph,Vertex
 from Individual import Individual
 import random
 import numpy as np
+from numpy import unique
 from Utils import fitness
 from config import POPULATION_SIZE,TOUR_SIZE,SELECTION_MODE,CROSS_PROBABILITY,MUTATION_PROBABILITY,REPLACEMENT_PROBABILITY, MAX_NUM_VALUTATIONS,CROSSOVER_TYPE,COLOR_NUMBER
 class Genetic:
@@ -43,11 +44,13 @@ class Genetic:
                 return c
 
     def run(self,):
-        print("RUN numero")
         self.generatePopulation()
         instance_t = 0
         fitness_counter = 0
-        absolute_best_solution  = 0
+        absolute_best_solution  = Individual()
+        absolute_best_solution.fitness = 10000
+        besties_solutions = []
+
 
         while(not self.stop):
             population_t = []
@@ -70,6 +73,7 @@ class Genetic:
                         # --------------------------------------------------------------------------
                         a = min(random.sample(self.population, TOUR_SIZE), key = lambda i :i.fitness)
                         b = min(random.sample(self.population, TOUR_SIZE), key = lambda i: i.fitness)
+
                         a.fitness = fitness(self.graph,a.solution)
                         b.fitness = fitness(self.graph,a.solution)
 
@@ -78,7 +82,7 @@ class Genetic:
                         # Random Selection: choose two random parents from the population.
                         # --------------------------------------------------------------------------
                         a, b = random.sample(self.population, 2)
-                        
+                        print("a",a) 
                         a.fitness = fitness(self.graph,a.solution)
                         b.fitness = fitness(self.graph,a.solution)
 
@@ -114,6 +118,31 @@ class Genetic:
                     # ------------------------------------------------------------------------------
                     # Mutation
                     # ------------------------------------------------------------------------------
+                    mean_fitness = sum([i.fitness for i in self.population]) / POPULATION_SIZE
+
+                    if(mean_fitness <=10 and self.colorSize > 4) :
+                        # Remove random color --
+                        randColToRemove = random.randint(1,self.colorSize-1)
+                        randColToReplace = random.randint(1,self.colorSize-1)
+
+                        for i,element in enumerate(c.solution):
+                         
+                            if(element == randColToRemove):
+                                element = randColToReplace
+                        
+                        for i,element in enumerate(d.solution):
+                            if(element == randColToRemove):
+                                element = randColToReplace
+
+                        
+                        self.colorSize = self.colorSize -1
+                        print("c.solution",c.solution)     
+                        print("colore diminiuto",self.colorSize)
+
+
+                        c.fitness = fitness(self.graph,c.solution)
+                        d.fitness = fitness(self.graph,d.solution)
+
 
                     if (random.random() <=MUTATION_PROBABILITY):
                         pos = random.randint(0,VERTEX_NUMBER -1)
@@ -144,25 +173,29 @@ class Genetic:
             best_fitness = min([i.fitness for i in self.population]) 
             
 
-            print('{0}\t {0}\t{1}\t{2:.3f}\t{3:.3f}'.format(fitness_counter,instance_t, best_fitness, mean_fitness, std_fitness))
+            print('counter: {0}\t istanza: {1}\t best_fitness:{2}\t mean fitness: {3}\t deviation :{4}\t'.format(fitness_counter,instance_t, best_fitness, mean_fitness, std_fitness))
 
-            best_solution = sorted(self.population, key = lambda i: i.fitness, reverse=False)[0]
-            if(best_solution.fitness == 0) :    
-                print("Trovata soluzione con numero di colori pari a :",self.colorSize)
-                print("solution",best_solution.solution)  
-                return (best_solution,True)
+            best_solution = sorted(self.population, key = lambda i:  (i.fitness, len(unique(i.solution))),  reverse=False)[0]
+        
 
-            if best_solution.fitness < absolute_best_solution:
-                absolute_best_solution = best_solution.fitness
-                evaluations = fitness_counter
+
+         
+            if best_solution.fitness <= absolute_best_solution.fitness and len(unique(best_solution.solution)) <= len(unique(best_solution.solution)):
+                absolute_best_solution = best_solution
+                # evaluations = fitness_counter
 
             if(fitness_counter > MAX_NUM_VALUTATIONS):
-                print("stop qui",fitness_counter)
                 self.stop = True
-                return(-1,False)
-             
-            # print("iteration: ",instance_t, " - The best solution is finded at", evaluations, "is:", absolute_best_solution.solution,"with fitness: ",absolute_best_solution.fitness)
-        return absolute_best_solution
+                # return(-1,False)
+        
+        # print("final population",population_t)
+
+        for i in population_t:
+            print("popolazione",i.solution , " -- colori : ",len(unique(i.solution)),'fitness',i.fitness)
+       
+
+        print("iteration: ",instance_t, " - The best solution is finded at", "is:", absolute_best_solution.solution,"with fitness: ",absolute_best_solution.fitness,"color: ",len(unique(absolute_best_solution.solution)))
+        return absolute_best_solution,True
 
                 
 
