@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from config import PATHNAME,COLOR_NUMBER
 
 
-def getGraphDegree(graph : Graph):
+def getUpperBound(graph : Graph):
      max_degree = 0
      for vertex in graph.vertices:
           vertex_degree = len(vertex.neighbors)
@@ -17,19 +17,13 @@ def getGraphDegree(graph : Graph):
 
 
 if __name__ =='__main__':
-     #queen_5x5 -> 5
      best_sol = []
      graph = translate_dimacs_graph(pathname=PATHNAME)
-     start_color_size = getGraphDegree(graph)
-
-     ga = Genetic(graph,colorSize=10)
+     start_color_size = getUpperBound(graph)
+     ga = Genetic(graph,colorSize=11)
      path= PATHNAME.split('/')[2] 
      
      best_sol,isValid = ga.run(path_name=path,run=1)
-     
-
-
-               
      
 
      # print("la soluzione trovata ha un numero di colori pari a ",ga.colorSize)
@@ -37,7 +31,7 @@ if __name__ =='__main__':
      print("colori di partenza",start_color_size)
      
 
-     if(best_sol == [] and isValid == False):
+     if(best_sol.solution == None and isValid == False):
           print("Non è stata trovata nessuna soluzione!")
      else:
           colored_sol = []

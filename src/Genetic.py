@@ -206,19 +206,22 @@ class Genetic:
         t_final = time.time()
         total_time = t_final - t_inizial
        
+        if(absolute_best_solution.solution != None):
 
-        isSolutionValid = self.isColoringValid(absolute_best_solution.solution)
-
-        if(isSolutionValid == True):
-            print("iteration: ",instance_t, " - The best solution is finded at", "is:", absolute_best_solution.solution[:10],"with fitness: ",absolute_best_solution.fitness,"color: ",len(unique(absolute_best_solution.solution)))
-            print("execution time of run ", str(run),": ",format_timespan(total_time))
-            info = ["solution: " , str(absolute_best_solution.solution),
-                "\n n_colors: ", str(len(unique(absolute_best_solution.solution))),
-                "\n mean: " , str(mean_fitness),
-                "\n std: ", str(std_fitness),
-                "\n execution time: ", str(std_fitness)]
-            save(path_name,run,info)
+            isSolutionValid = self.isColoringValid(absolute_best_solution.solution)
+            if(isSolutionValid == True):
+                print("iteration: ",instance_t, " - The best solution is finded at", "is:", absolute_best_solution.solution[:10],"with fitness: ",absolute_best_solution.fitness,"color: ",len(unique(absolute_best_solution.solution)))
+                print("execution time of run ", str(run),": ",format_timespan(total_time))
+                info = ["solution: " , str(absolute_best_solution.solution),
+                    "\n n_colors: ", str(len(unique(absolute_best_solution.solution))),
+                    "\n mean: " , str(mean_fitness),
+                    "\n std: ", str(std_fitness),
+                    "\n execution time: ", str(std_fitness)]
+                save(path_name,run,info)
+        else :
+            isSolutionValid = False
       
+        
         return absolute_best_solution,isSolutionValid
 
                 
