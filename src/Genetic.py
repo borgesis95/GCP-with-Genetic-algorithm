@@ -3,14 +3,20 @@ from Individual import Individual
 import random
 import numpy as np
 from numpy import unique
-from Utils import fitness,randomMutation,edgesMutation
-from config import MUTATION_TYPE,POPULATION_SIZE,TOUR_SIZE,SELECTION_MODE,CROSS_PROBABILITY,MUTATION_PROBABILITY,REPLACEMENT_PROBABILITY, MAX_NUM_VALUTATIONS,CROSSOVER_TYPE
+from Utils import fitness,randomMutation,edgesMutation,save
+from torch.utils.tensorboard import SummaryWriter
+from os.path import join
+from config import MUTATION_TYPE,POPULATION_SIZE,TOUR_SIZE,SELECTION_MODE,CROSS_PROBABILITY,MUTATION_PROBABILITY,\
+REPLACEMENT_PROBABILITY,MEAN_THRESHOLD, MAX_NUM_VALUTATIONS,CROSSOVER_TYPE,LOGDIR
+import sys
+import time
+from humanfriendly import format_timespan
 class Genetic:
     def __init__(self, graph:Graph,colorSize :int):
         self.graph = graph
         self.population = []
         self.stop = False
-        self.colorSize = colorSize
+        self.colorUpperbound = colorSize
 
 
     def generatePopulation(self):
@@ -18,7 +24,7 @@ class Genetic:
         random.seed()
         count = 0
         while len(self.population) < POPULATION_SIZE:
-            colors = [ i+1 for i in range(self.colorSize)]
+            colors = [ i+1 for i in range(self.colorUpperbound)]
             sol = []
             for i in range (len(vertex)):
                 color = random.choice(colors)
@@ -43,18 +49,26 @@ class Genetic:
             if vertex == index + 1:
                 return c
 
-    def run(self,):
+    def run(self,path_name : str,run:int):
+        t_inizial = time.time()
+        summary_path = join(LOGDIR,path_name,'run-'+str(run))
+        writer = SummaryWriter(summary_path)
+        
         self.generatePopulation()
         instance_t = 0
         fitness_counter = 0
         absolute_best_solution  = Individual()
-        absolute_best_solution.fitness = 10000000
+        best_solution = Individual()
 
+        absolute_best_solution.fitness = sys.maxsize
+        best_solution.fitness = sys.maxsize
+
+        actualColor = self.colorUpperbound       
 
         while(not self.stop):
             population_t = []
             instance_t = instance_t + 1
-
+            
             for _ in range(int(POPULATION_SIZE / 2)):
                     if(SELECTION_MODE =='roulette'):    
                         # --------------------------------------------------------------------------
@@ -117,11 +131,10 @@ class Genetic:
                     # Mutation
                     # ------------------------------------------------------------------------------
                     mean_fitness = sum([i.fitness for i in self.population]) / POPULATION_SIZE
-                   
-                    if(mean_fitness <=10 and self.colorSize > 4) :
+                    if(mean_fitness <= MEAN_THRESHOLD and best_solution.fitness == 0 and len(unique(best_solution.solution) <= actualColor)) :
                         # Remove random color --
-                        randColToRemove = random.randint(1,self.colorSize-1)
-                        randColToReplace = random.randint(1,self.colorSize-1)
+                        randColToRemove = random.randint(1,actualColor)
+                        randColToReplace = random.randint(1,actualColor)
 
                         for i,element in enumerate(c.solution):
                          
@@ -131,7 +144,7 @@ class Genetic:
                         for i,element in enumerate(d.solution):
                             if(element == randColToRemove):
                                 element = randColToReplace  
-                        self.colorSize = self.colorSize -1
+                        
                       
 
 
@@ -147,10 +160,10 @@ class Genetic:
 
                     c.fitness = fitness(self.graph,c.solution)
                     d.fitness = fitness(self.graph,d.solution)
-
+                    
                     population_t.append(c)
                     population_t.append(d)
-                    fitness_counter+=1
+                    fitness_counter+=2
                     
     
 
@@ -167,29 +180,46 @@ class Genetic:
             mean_fitness = sum([i.fitness for i in self.population]) / POPULATION_SIZE
             std_fitness = np.std([i.fitness for i in self.population])
             best_fitness = min([i.fitness for i in self.population]) 
-            
 
-            print('counter: {0}\t istanza: {1}\t best_fitness:{2}\t mean fitness: {3}\t deviation :{4}\t'.format(fitness_counter,instance_t, best_fitness, mean_fitness, std_fitness))
+            # ---- Print graph -----
+            writer.add_scalar('colors/', actualColor, global_step=fitness_counter)
 
-            best_solution = sorted(self.population, key = lambda i:  (i.fitness, len(unique(i.solution))),  reverse=False)[0]
         
+            print('counter: {0}\t best fitness: {1}\t mean fitness:{2:.2f}\t std :{3:.1f}\t'.format(fitness_counter, best_fitness, mean_fitness, std_fitness))
+            best_solution = sorted(self.population, key = lambda i:  (i.fitness, len(unique(i.solution))),  reverse=False)[0]
 
+            isColoringValid = self.isColoringValid(best_solution.solution)
+            colorsNumb = len(unique(best_solution.solution))
 
-         
-            if best_solution.fitness <= absolute_best_solution.fitness and len(unique(best_solution.solution)) <= len(unique(best_solution.solution)):
+            if best_solution.fitness <= absolute_best_solution.fitness and isColoringValid  and colorsNumb <= actualColor:
+                print("HERE")
                 absolute_best_solution = best_solution
-                # evaluations = fitness_counter
+                actualColor = actualColor -1
 
             if(fitness_counter > MAX_NUM_VALUTATIONS):
                 self.stop = True
-        
+
 
         for i in population_t:
-            print("popolazione",i.solution , " -- colori : ",len(unique(i.solution)),'fitness',i.fitness)
+            print("popolazione",i.solution[:10] , " -- colori : ",len(unique(i.solution)),'fitness',i.fitness)
+
+        t_final = time.time()
+        total_time = t_final - t_inizial
        
 
-        print("iteration: ",instance_t, " - The best solution is finded at", "is:", absolute_best_solution.solution,"with fitness: ",absolute_best_solution.fitness,"color: ",len(unique(absolute_best_solution.solution)))
-        return absolute_best_solution,True
+        isSolutionValid = self.isColoringValid(absolute_best_solution.solution)
+
+        if(isSolutionValid == True):
+            print("iteration: ",instance_t, " - The best solution is finded at", "is:", absolute_best_solution.solution[:10],"with fitness: ",absolute_best_solution.fitness,"color: ",len(unique(absolute_best_solution.solution)))
+            print("execution time of run ", str(run),": ",format_timespan(total_time))
+            info = ["solution: " , str(absolute_best_solution.solution),
+                "\n n_colors: ", str(len(unique(absolute_best_solution.solution))),
+                "\n mean: " , str(mean_fitness),
+                "\n std: ", str(std_fitness),
+                "\n execution time: ", str(std_fitness)]
+            save(path_name,run,info)
+      
+        return absolute_best_solution,isSolutionValid
 
                 
 

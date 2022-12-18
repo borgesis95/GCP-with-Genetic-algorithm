@@ -2,6 +2,7 @@ from Graph import Graph,Vertex
 from Individual import Individual
 import random
 from numpy import unique
+import os  
 
 
 # This method allow to convert dimacs standard on Graph class 
@@ -49,7 +50,8 @@ def fitness(graph:Graph,solution):
         if solution[u-1] == solution[v-1]:
             count+=1
 
-    return count * solutionsColor
+    return (count * solutionsColor) + solutionsColor
+
 
 
 def randomMutation(ind : Individual,vertexNumber : int):
@@ -70,6 +72,14 @@ def edgesMutation(ind  : Individual,vertexNumber : int,graph: Graph):
         ind.solution[pos] =  random.randint(1,colors) 
     return ind
 
+def save(istance_name:str,run : int,data):
+    path = 'results/' + istance_name+ '_logs'
+    if not os.path.exists(path):
+        os.makedirs('results/' + istance_name+ '_logs')
+    pathfile = path + '/run_n_' + str(run) +'.txt'
+
+    file = open(pathfile,'a')
+    file.writelines(data)
 
 
     

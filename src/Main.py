@@ -4,8 +4,7 @@ from Graph import Graph
 import networkx as nx
 import matplotlib.pyplot as plt
 from config import PATHNAME,COLOR_NUMBER
-import time
-from humanfriendly import format_timespan
+
 
 def getGraphDegree(graph : Graph):
      max_degree = 0
@@ -18,15 +17,16 @@ def getGraphDegree(graph : Graph):
 
 
 if __name__ =='__main__':
+     #queen_5x5 -> 5
      best_sol = []
      graph = translate_dimacs_graph(pathname=PATHNAME)
      start_color_size = getGraphDegree(graph)
 
-     ga = Genetic(graph,colorSize=start_color_size-5)
-     t_inizial = time.time()
-     best_sol,isValid = ga.run()
-     t_final = time.time()
-     total_time = t_final - t_inizial
+     ga = Genetic(graph,colorSize=10)
+     path= PATHNAME.split('/')[2] 
+     
+     best_sol,isValid = ga.run(path_name=path,run=1)
+     
 
 
                
@@ -35,10 +35,9 @@ if __name__ =='__main__':
      # print("la soluzione trovata ha un numero di colori pari a ",ga.colorSize)
      colors = colors(graph.number_of_vertex)
      print("colori di partenza",start_color_size)
-     print('tempo di esecuzione:', format_timespan(total_time))
+     
 
-
-     if(best_sol == []):
+     if(best_sol == [] and isValid == False):
           print("Non è stata trovata nessuna soluzione!")
      else:
           colored_sol = []
