@@ -50,13 +50,19 @@ class Genetic:
                 return c
 
     def run(self,path_name : str,run:int):
+
+        # Allow to set diff seed        
+        random.seed()
+        print("Run: ", run)
+
         t_inizial = time.time()
-        summary_path = join(LOGDIR,path_name,'run-'+str(run))
+        summary_path = join(LOGDIR,path_name,'run('+str(run)+')')
         writer = SummaryWriter(summary_path)
         
         self.generatePopulation()
         instance_t = 0
         fitness_counter = 0
+        self.stop = False
         absolute_best_solution  = Individual()
         best_solution = Individual()
 
@@ -192,16 +198,16 @@ class Genetic:
             colorsNumb = len(unique(best_solution.solution))
 
             if best_solution.fitness <= absolute_best_solution.fitness and isColoringValid  and colorsNumb <= actualColor:
-                print("HERE")
                 absolute_best_solution = best_solution
                 actualColor = actualColor -1
 
             if(fitness_counter > MAX_NUM_VALUTATIONS):
+                print("RAGGIUNTO!")
                 self.stop = True
 
 
-        for i in population_t:
-            print("popolazione",i.solution[:10] , " -- colori : ",len(unique(i.solution)),'fitness',i.fitness)
+        # for i in population_t:
+        #     print("popolazione",i.solution[:10] , " -- colori : ",len(unique(i.solution)),'fitness',i.fitness)
 
         t_final = time.time()
         total_time = t_final - t_inizial
@@ -212,11 +218,12 @@ class Genetic:
             if(isSolutionValid == True):
                 print("iteration: ",instance_t, " - The best solution is finded at", "is:", absolute_best_solution.solution[:10],"with fitness: ",absolute_best_solution.fitness,"color: ",len(unique(absolute_best_solution.solution)))
                 print("execution time of run ", str(run),": ",format_timespan(total_time))
-                info = ["solution: " , str(absolute_best_solution.solution),
+                info = [" solution: " , str(absolute_best_solution.solution),
+                    "\n starting color: ", str(self.colorUpperbound),
                     "\n n_colors: ", str(len(unique(absolute_best_solution.solution))),
                     "\n mean: " , str(mean_fitness),
                     "\n std: ", str(std_fitness),
-                    "\n execution time: ", str(std_fitness)]
+                    "\n execution time: ", format_timespan(total_time)]
                 save(path_name,run,info)
         else :
             isSolutionValid = False

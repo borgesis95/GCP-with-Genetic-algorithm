@@ -3,6 +3,7 @@ from Individual import Individual
 import random
 from numpy import unique
 import os  
+import matplotlib.pyplot as plt
 
 
 # This method allow to convert dimacs standard on Graph class 
@@ -36,7 +37,6 @@ def translate_dimacs_graph(pathname):
 
 def colors(colors_size):
      colors = []
-
      for i in range(colors_size):
           color = "#"+''.join([random.choice('ABCDEF0123456789') for i in range(6)])
           colors.append(color)
@@ -73,13 +73,22 @@ def edgesMutation(ind  : Individual,vertexNumber : int,graph: Graph):
     return ind
 
 def save(istance_name:str,run : int,data):
-    path = 'results/' + istance_name+ '_logs'
+    path = 'results/' + istance_name+'/'+ 'run('+ str(run)+')/'
     if not os.path.exists(path):
-        os.makedirs('results/' + istance_name+ '_logs')
-    pathfile = path + '/run_n_' + str(run) +'.txt'
+        os.makedirs(path)
+    pathfile = path + istance_name + '.txt'
 
     file = open(pathfile,'a')
     file.writelines(data)
+
+def saveGraph(istance_name:str,run:int):
+    path = 'results/' + istance_name
+    if not os.path.exists(path):
+            os.makedirs(path)
+    pathfile = path  + '.png'
+    plt.savefig(pathfile)
+
+
 
 
     

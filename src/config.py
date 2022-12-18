@@ -1,7 +1,6 @@
 
 PATHNAME ='./instances/myciel3.col'
 POPULATION_SIZE = 100
-COLOR_NUMBER = 40
 # Tournament size
 TOUR_SIZE = 10
 # Crossover prob
@@ -13,9 +12,9 @@ MEAN_THRESHOLD  = 10
 #Replacement U + lambda probability
 REPLACEMENT_PROBABILITY = 0.1
 
-MAX_NUM_VALUTATIONS = 10*(10**4)
+MAX_NUM_VALUTATIONS = 10*(10**3)
 
-
+RUNS = 3
 # Value that allow user to select selection's type between : Tournament,Random and Roulette
 SELECTION_MODE = 'tournament';
 
