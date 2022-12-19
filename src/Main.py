@@ -2,7 +2,7 @@ from Utils import translate_dimacs_graph,colors,saveGraph,saveRuns
 from Genetic import Genetic
 from Graph import Graph
 import networkx as nx
-from config import PATHNAME,RUNS
+from config import PATHNAME,RUNS,PATHS,BASE
 import matplotlib.pyplot as plt
 from numpy import unique
 import numpy as np
@@ -49,33 +49,38 @@ def calculation(solutions) :
      
 
 if __name__ =='__main__':
-     best_sol = []
-     graph = translate_dimacs_graph(pathname=PATHNAME)
-     start_color_size = getUpperBound(graph)
-     ga = Genetic(graph,colorSize=start_color_size)
-     path= PATHNAME.split('/')[2] 
-     
-     solutions_runs = []
-     t_inizial = time.time()
 
-     for run in range(RUNS):
+     seeds = [4135, 3359, 2427, 6179, 8757, 6312, 3212, 5432, 6510, 7436]
+
+     for graphPath  in PATHS:
+          newPath = BASE + graphPath
           best_sol = []
-          isValid = False
-          best_sol,isValid = ga.run(path_name=path,run=run)
-          if(best_sol.solution == None and isValid == False):
-               print("Non è stata trovata nessuna soluzione!")
-          else:
-               solutions_runs.append(best_sol)
-    
-     t_final = time.time()
-     total_time = t_final - t_inizial
-     time_formatted=format_timespan(total_time)
+          graph = translate_dimacs_graph(pathname=newPath)
+          start_color_size = getUpperBound(graph)
+          ga = Genetic(graph,colorSize=start_color_size)
+          path= newPath.split('/')[2] 
 
-     best_color,mean,std = calculation(solutions_runs)
-     saveRuns(path,best_color,mean,std,time_formatted)
-     best_runs = min(solutions_runs, key = lambda i :i.fitness)
+          solutions_runs = []
+          t_inizial = time.time()
 
-     drawGraph(best_runs.solution)
+          for run in range(RUNS):
+               best_sol = []
+               isValid = False
+               best_sol,isValid = ga.run(path_name=path,run=run,color_size=start_color_size,seed=seeds[run])
+               if(best_sol.solution == None and isValid == False):
+                    print("Non è stata trovata nessuna soluzione!")
+               else:
+                    solutions_runs.append(best_sol)
+     
+          t_final = time.time()
+          total_time = t_final - t_inizial
+          time_formatted=format_timespan(total_time)
+
+          best_color,mean,std = calculation(solutions_runs)
+          saveRuns(path,best_color,mean,std,time_formatted)
+          best_runs = min(solutions_runs, key = lambda i :i.fitness)
+
+          drawGraph(best_runs.solution)
 
    
     

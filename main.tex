@@ -1,0 +1,66 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\title{Applicazione di un algoritmo genetico per la risoluzione del  Graph coloring problem}
+\author{Salvatore Borgesi}
+\date{Dicembre 2022/Gennaio 2023}
+
+\begin{document}
+
+\maketitle
+\section{Introduzione}
+Il problema da trattare consiste nel colorare i vertici di un grafo considerando un vincolo. Dato un numeron di colori, vi è la necessità di colorare i vertici in maniera tale che due nodi adiacenti non abbiano lo stesso colore. 
+Il numero minimo di colori che può essere utilizzato viene definito  \textbf{chromatic number} \chi(G). \end{chi} 
+La risoluzione a questo problema può essere adottata da numerose applicazioni quali:
+\begin{enumerate}
+    \item Scheduling.
+    \item Gioco del Sudoku.
+    \item Colorazione delle mappe.
+\end{itemize}
+
+
+\noindent La scelta dell'algoritmo genetico per il problema, è stata dettata dal fatto che essa mi consente di migliorare le soluzioni ottenute iterazione per iterazione, e mandando al successivo step,  solo le soluzioni che si "avvicinano" di più all'ottimo.
+
+\section {Rappresentazione della popolazione iniziale}
+Per l'inizializzazione della popolazione iniziale viene prima di tutto definito un vettore di numeri che va da 1 fino al numero massimo di colori che si vuole utilizzare per colorare i vertici del grafo affinchè rispettino il vincolo principale del problema. Supponiamo dunque, che il numero di colori che si vuole utilizzare sia pari a n = 10. L'array sarà [1,2,3...,10]. Data quest'ultima lista, viene successivamente definita una soluzione (rappresentata anche essa da un'array) di lunghezza pari al numero di vertici del grafo. A ciascun cassetto della lista, viene asseganto in maniera casuale uno dei valori numerici definiti nell'arrray precedente. Questa operazione di generazione di un singolo individuo, viene eseguita ripetutamente fino a raggiungere il numero di individui desiderati (Rappresentato in un file di configurazione tramite la variabile POPULATON SIZE).
+
+%METTERE LO PSEUDOCODICE
+
+\section{Funzione di fitness}
+In un algoritmo genetico, la funzione di fitness consente di comprendere quale tra K individui è il migliore e quindi andrà con molta probabilità alle iterazioni successive. La fitness definita all'interno della soluzione costruita, esamina ciascun arco del grafo, e per ciascuno viene verificato se due nodi adiacenti hanno lo stesso colore. In caso di esito positivo viene aggiunta una penalità. Successivamente, la somma degli archi che collegano due vertici aventi lo stesso colore, viene moltiplicata per il numero di colori che sta utilizzando la soluzione valutata. Questo prodotto in realtà restituisce zero se tutti i vertici sono colorati in maniera corretta. Dopo diversi esperimenti ho notato che questa prima "versione" di funzione di valutazione ad un determinato punto non riusciva più a migliorare. Proprio per tale motivo ho deciso di aggiungere al prodotto citato prima, il numero di colori utilizzato. Portando un esempio se due soluzioni sono corrette ma una ha 5 colori ed un altra ne ha 6 .Con la seconda funzione di fitness descritta, nonostante le due soluzioni siano entrambe corrette, la prima è migliore in quanto utilizza un minor numero di colori per il grafo
+
+% METTERE PSEUDOCODICE
+
+\section{Algoritmo utilizzato e pseudocodice}
+In questa sezione della relazione scenderò più nel dettaglio nell'esaminare e descrivere l'algoritmo costruito per la risoluzione del problema 
+
+%% pseudocodice
+
+\noindent Come evidenziato nel codice, la prima parte consiste nel tradurre le istanze fornite nel formato .col in maniera tale da poter essere rappresentate mediante codice. Per far questo sono state definite due classi : \textit{Graph()} e \textit{Vertex()}. All'interno dell'oggetto grafo saranno presenti la lista di archi e la lista di vertici. Ogni vertice tiene traccia di chi sono i nodi adiacienti ad esso.
+
+%% pseudocodice
+
+\noindent Lo pseudocodice descritto dalla figura (METTERE NOME FIGURA) mostra come le operazioni più importanti siano quelle di \textit{Selection}, \textit{Crossover}, \textit{Mutation} e di \textit{Replacement}. Nelle prossime sotto sezioni saranno descritte tali operazioni e quali accorgimenti sono stati adottati.
+
+\subsection{Selection}
+Il processo di \textit{Selezione} consiste nel selezionare tra la popolazione generata nella fase di inizializzazione la "\textit{prole}" che sarà portata avanti nelle successive generazioni (dopo esere sstate ancora trasformate).In questo progetto sono state implementate tre tipi di operatori di selezione
+
+\subsubsection{Roulette}
+Tramite questa modalità di selezione, vengono selezionati con probabilità più alta i genitori che hanno una fitness migliore. Per come è stata calcolata la fitness in questo progetto, i genitori che hanno un valore di fitness basso, avranno una maggiore probabilità di essere selezionati.
+
+\subsubsection{Random}
+Questa strategia prevede una selezione casuale dei parent. 
+
+\subsubsection{Tournament}
+Con l'utilizzo di questa strategia vengono estratti K individui dalla popolazione. Di questi K individui viene selezionato quello che il valore di fitness migliore.
+
+\subsubsection{Strategia adottata per la selezione}
+Mentre i tre metodi sopra citati sono stati implementati nel codice, la decisione finale è stata quella di utilizzare il la modalità \textit{Tournament} con un valore di K = 10. L'utilizzo di questo operatore infatti, consente anche a configurazioni non ottimali di fare parte delle future generazioni, dando l'opportunità di spaziare tra le varie soluzioni e non convergere dunque ad un ottimo locale. Sono stati effettuati diversi tentativi con K = 5,10,20,30. Il compromesso è stato trovato appunto per K = 10 che consente di non bloccarsi in una località ben precisa.
+
+\section{Crossover}
+L'operatore genetico di Crossover offre l'opportunità di mescolare le soluzioni ottenute mediante l'operatore di selezione ed ottenere dunque dei nuovi figli. Gli operatori di crossover sviluppait durante la realizzazione del prodotto sono il \textit{Single one-point crossover} e il \textit{Two-point crossover}.
+
+\subsection{Single one-point crossover}
+
+
+\end{document}

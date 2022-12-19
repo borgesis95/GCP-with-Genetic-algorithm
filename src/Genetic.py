@@ -49,10 +49,13 @@ class Genetic:
             if vertex == index + 1:
                 return c
 
-    def run(self,path_name : str,run:int):
+    def run(self,path_name : str,run:int,color_size,seed : int):
 
-        # Allow to set diff seed        
-        random.seed()
+        # Allow to set diff seed   
+        self.population = []
+
+        random.seed(seed)
+        self.colorUpperbound = color_size
         t_inizial = time.time()
         summary_path = join(LOGDIR,path_name,'run('+str(run)+')')
         writer = SummaryWriter(summary_path)
@@ -68,7 +71,6 @@ class Genetic:
         best_solution.fitness = sys.maxsize
 
         actualColor = self.colorUpperbound       
-
         while(not self.stop):
             population_t = []
             instance_t = instance_t + 1
@@ -186,7 +188,6 @@ class Genetic:
             best_fitness = min([i.fitness for i in self.population]) 
 
             # ---- Print graph -----
-            writer.add_scalar('colors/', actualColor, global_step=fitness_counter)
             print('counter: {0}\t best fitness: {1}\t mean fitness:{2:.2f}\t std :{3:.1f}\t'.format(fitness_counter, best_fitness, mean_fitness, std_fitness))
             best_solution = sorted(self.population, key = lambda i:  (i.fitness, len(unique(i.solution))),  reverse=False)[0]
 
@@ -195,10 +196,11 @@ class Genetic:
 
             if best_solution.fitness <= absolute_best_solution.fitness and isColoringValid  and colorsNumb <= actualColor:
                 absolute_best_solution = best_solution
+                writer.add_scalar('colors/',actualColor, global_step=fitness_counter)
                 actualColor = actualColor -1
 
+
             if(fitness_counter > MAX_NUM_VALUTATIONS):
-                print("End valutations!")
                 self.stop = True
 
 
