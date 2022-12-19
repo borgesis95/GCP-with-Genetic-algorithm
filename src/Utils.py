@@ -81,6 +81,16 @@ def save(istance_name:str,run : int,data):
     file = open(pathfile,'a')
     file.writelines(data)
 
+def saveRuns(istance_name:str, bc:int, mean:float,std:float,time :str):
+    path = 'results/' + istance_name 
+    value   ='istance: '+ istance_name +  '  bc: ' + str(bc) +'  mean: ' + str(mean) +'  std: '+ str(std) + '  stime: ' + time
+    if not os.path.exists(path):
+        os.makedirs(path)
+    pathfile = path  + '.txt'
+    print("pathfile",pathfile)
+    file = open(pathfile,'a')
+    file.writelines(value)
+
 def saveGraph(istance_name:str,run:int):
     path = 'results/' + istance_name
     if not os.path.exists(path):

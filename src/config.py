@@ -1,5 +1,5 @@
 
-PATHNAME ='./instances/myciel3.col'
+PATHNAME ='./instances/queen5_5.col'
 POPULATION_SIZE = 100
 # Tournament size
 TOUR_SIZE = 10
@@ -12,9 +12,9 @@ MEAN_THRESHOLD  = 10
 #Replacement U + lambda probability
 REPLACEMENT_PROBABILITY = 0.1
 
-MAX_NUM_VALUTATIONS = 10*(10**3)
+MAX_NUM_VALUTATIONS = 10*(10**6)
 
-RUNS = 3
+RUNS = 2
 # Value that allow user to select selection's type between : Tournament,Random and Roulette
 SELECTION_MODE = 'tournament';
 

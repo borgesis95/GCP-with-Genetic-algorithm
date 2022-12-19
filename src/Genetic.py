@@ -53,8 +53,6 @@ class Genetic:
 
         # Allow to set diff seed        
         random.seed()
-        print("Run: ", run)
-
         t_inizial = time.time()
         summary_path = join(LOGDIR,path_name,'run('+str(run)+')')
         writer = SummaryWriter(summary_path)
@@ -189,8 +187,6 @@ class Genetic:
 
             # ---- Print graph -----
             writer.add_scalar('colors/', actualColor, global_step=fitness_counter)
-
-        
             print('counter: {0}\t best fitness: {1}\t mean fitness:{2:.2f}\t std :{3:.1f}\t'.format(fitness_counter, best_fitness, mean_fitness, std_fitness))
             best_solution = sorted(self.population, key = lambda i:  (i.fitness, len(unique(i.solution))),  reverse=False)[0]
 
@@ -202,7 +198,7 @@ class Genetic:
                 actualColor = actualColor -1
 
             if(fitness_counter > MAX_NUM_VALUTATIONS):
-                print("RAGGIUNTO!")
+                print("End valutations!")
                 self.stop = True
 
 
