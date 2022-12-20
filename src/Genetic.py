@@ -214,6 +214,7 @@ class Genetic:
 
             isSolutionValid = self.isColoringValid(absolute_best_solution.solution)
             if(isSolutionValid == True):
+                writer.add_scalar('colors/',actualColor, global_step=fitness_counter)
                 print("iteration: ",instance_t, " - The best solution is finded at", "is:", absolute_best_solution.solution[:10],"with fitness: ",absolute_best_solution.fitness,"color: ",len(unique(absolute_best_solution.solution)))
                 print("execution time of run ", str(run),": ",format_timespan(total_time))
                 info = [" solution: " , str(absolute_best_solution.solution),

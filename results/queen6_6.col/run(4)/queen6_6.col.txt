@@ -1,0 +1,6 @@
+ solution: [10, 7, 8, 9, 3, 11, 8, 4, 1, 11, 7, 9, 5, 3, 9, 4, 10, 8, 11, 10, 5, 3, 9, 7, 7, 8, 4, 1, 11, 10, 9, 1, 7, 8, 4, 5]
+ starting color: 19
+ n_colors: 9
+ mean: 11.71
+ std: 11.202941577996377
+ execution time: 4 minutes and 10.29 seconds
