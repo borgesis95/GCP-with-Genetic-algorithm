@@ -1,7 +1,7 @@
 
 PATHNAME ='./instances/queen5_5.col'
 BASE = './instances/'
-PATHS = ['DSJC125.5.col']
+PATHS = ['DSJC125.9.col','le450_15b.col','le450_15c.col','le450_15d.col']
 POPULATION_SIZE = 100
 # Tournament size
 TOUR_SIZE = 10
