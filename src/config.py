@@ -1,16 +1,16 @@
 
 PATHNAME ='./instances/queen5_5.col'
 BASE = './instances/'
-PATHS = ['DSJC125.9.col','le450_15b.col','le450_15c.col','le450_15d.col']
+PATHS = ['le450_15b.col','le450_15c.col']
 POPULATION_SIZE = 100
 # Tournament size
-TOUR_SIZE = 10
+TOUR_SIZE = 20
 # Crossover prob
-CROSS_PROBABILITY = 0.9
+CROSS_PROBABILITY = 0.8
 # Mutation prob
-MUTATION_PROBABILITY = 0.1
+MUTATION_PROBABILITY = 0.2
 
-MEAN_THRESHOLD  = 10
+MEAN_THRESHOLD  = 20
 #Replacement U + lambda probability
 REPLACEMENT_PROBABILITY = 0.1
 
@@ -20,7 +20,7 @@ RUNS = 10
 # Value that allow user to select selection's type between : Tournament,Random and Roulette
 SELECTION_MODE = 'tournament';
 
-CROSSOVER_TYPE = '1-point'
+CROSSOVER_TYPE = '2-point'
 
 MUTATION_TYPE ='random'
 
