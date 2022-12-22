@@ -69,7 +69,7 @@ class Genetic:
 
         absolute_best_solution.fitness = sys.maxsize
         best_solution.fitness = sys.maxsize
-
+        color_removed  = 0
         actualColor = self.colorUpperbound       
         while(not self.stop):
             population_t = []
@@ -137,11 +137,13 @@ class Genetic:
                     # Mutation
                     # ------------------------------------------------------------------------------
                     mean_fitness = sum([i.fitness for i in self.population]) / POPULATION_SIZE
-                    if(mean_fitness <= MEAN_THRESHOLD and best_solution.fitness == 0 and len(unique(best_solution.solution) <= actualColor)) :
+                    if(mean_fitness - actualColor <= MEAN_THRESHOLD and (best_solution.fitness - actualColor) == 0 and len(unique(best_solution.solution) <= actualColor)) :
                         # Remove random color --
                         randColToRemove = random.randint(1,actualColor)
                         randColToReplace = random.randint(1,actualColor)
-
+                        color_removed+=1
+                        writer.add_scalar('colors-removed/',color_removed, global_step=fitness_counter)
+                        
                         for i,element in enumerate(c.solution):
                          
                             if(element == randColToRemove):
@@ -188,7 +190,7 @@ class Genetic:
             best_fitness = min([i.fitness for i in self.population]) 
 
             # ---- Print graph -----
-            print('counter: {0}\t best fitness: {1}\t mean fitness:{2:.2f}\t std :{3:.1f}\t'.format(fitness_counter, best_fitness, mean_fitness, std_fitness))
+            print('counter: {0}\t best fitness: {1}\t mean fitness:{2:.2f}\t std :{3:.1f}\t removed: {4}'.format(fitness_counter, best_fitness, mean_fitness, std_fitness,color_removed))
             best_solution = sorted(self.population, key = lambda i:  (i.fitness, len(unique(i.solution))),  reverse=False)[0]
 
             isColoringValid = self.isColoringValid(best_solution.solution)

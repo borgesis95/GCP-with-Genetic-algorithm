@@ -66,7 +66,7 @@ if __name__ =='__main__':
           for run in range(RUNS):
                best_sol = []
                isValid = False
-               best_sol,isValid = ga.run(path_name=path,run=run,color_size=start_color_size,seed=seeds[run])
+               best_sol,isValid = ga.run(path_name=path,run=10,color_size=start_color_size,seed=seeds[0])
                if(best_sol.solution == None and isValid == False):
                     print("Non è stata trovata nessuna soluzione!")
                else:
@@ -77,10 +77,10 @@ if __name__ =='__main__':
           time_formatted=format_timespan(total_time)
 
           best_color,mean,std = calculation(solutions_runs)
-          saveRuns(path,best_color,mean,std,time_formatted)
+          # saveRuns(path,best_color,mean,std,time_formatted)
           best_runs = min(solutions_runs, key = lambda i :i.fitness)
 
-          drawGraph(best_runs.solution)
+          # drawGraph(best_runs.solution)
 
    
     

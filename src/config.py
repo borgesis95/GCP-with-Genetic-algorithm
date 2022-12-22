@@ -1,7 +1,7 @@
 
 PATHNAME ='./instances/queen5_5.col'
 BASE = './instances/'
-PATHS = ['le450_15b.col','le450_15c.col']
+PATHS = ['queen8_12.col','le450_15b.col','le450_15c.col']
 POPULATION_SIZE = 100
 # Tournament size
 TOUR_SIZE = 20
@@ -10,13 +10,13 @@ CROSS_PROBABILITY = 0.8
 # Mutation prob
 MUTATION_PROBABILITY = 0.2
 
-MEAN_THRESHOLD  = 20
+MEAN_THRESHOLD  = 30
 #Replacement U + lambda probability
 REPLACEMENT_PROBABILITY = 0.1
 
 MAX_NUM_VALUTATIONS = 10*(10**5)
 
-RUNS = 10
+RUNS = 1
 # Value that allow user to select selection's type between : Tournament,Random and Roulette
 SELECTION_MODE = 'tournament';
 
