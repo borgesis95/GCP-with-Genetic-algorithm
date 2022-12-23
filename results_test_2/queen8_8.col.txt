@@ -1,0 +1,1 @@
+istance: queen8_8.col  bc: 12  mean: 12.8  std: 0.4  stime: 1 hour, 19 minutes and 20 seconds

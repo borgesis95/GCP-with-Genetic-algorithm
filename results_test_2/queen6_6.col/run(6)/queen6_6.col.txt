@@ -1,0 +1,6 @@
+ solution: [28, 13, 8, 1, 2, 6, 2, 1, 6, 32, 16, 13, 6, 32, 16, 2, 1, 8, 16, 8, 1, 6, 28, 2, 13, 28, 32, 16, 8, 1, 8, 16, 13, 28, 6, 32]
+ starting color: 19
+ n_colors: 8
+ mean: 33.36
+ std: 23.785508193015342
+ execution time: 3 minutes and 57.22 seconds

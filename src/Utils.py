@@ -72,8 +72,40 @@ def edgesMutation(ind  : Individual,vertexNumber : int,graph: Graph):
         ind.solution[pos] =  random.randint(1,colors) 
     return ind
 
+def newEdgeMutation(sol : Individual, graph: Graph):
+
+    solution = sol
+    colors = len(sol.solution)
+    vertices = len(sol.solution) 
+    coloriUti = len(unique(sol.solution))
+    colorsChanged  = 0
+    for vertex in range(vertices):
+        neighbors = graph.vertices[vertex].getNeighbors()
+        for neighbor in neighbors:
+            if(sol.solution[vertex] == sol.solution[neighbor-1]):
+                color = random.randint(1,colors)
+                sol.solution[vertex] = color 
+                # sol.solution[neighbor-1] = colo r
+                colorsChanged = colorsChanged + 1
+
+    if(colorsChanged == 0):
+        position = random.randint(0,len(sol.solution)-1)
+        randomPosition = random.randint(0,len(sol.solution)-1)
+        newColor = sol.solution[randomPosition]
+        if(sol.solution[position] == sol.solution[randomPosition]):
+            sol.solution[position] = random.randint(1,colors)
+        else :
+            sol.solution[position] = newColor
+
+
+    # print("fitness",fitness(graph,sol.solution) - coloriUti )
+    # print("positionChanged",colorsChanged)
+    # print("solution",solution.solution)
+    return solution
+    
+
 def save(istance_name:str,run : int,data):
-    path = 'results/' + istance_name+'/'+ 'run('+ str(run)+')/'
+    path = 'results_test_2/' + istance_name+'/'+ 'run('+ str(run)+')/'
     if not os.path.exists(path):
         os.makedirs(path)
     pathfile = path + istance_name + '.txt'
@@ -82,7 +114,7 @@ def save(istance_name:str,run : int,data):
     file.writelines(data)
 
 def saveRuns(istance_name:str, bc:int, mean:float,std:float,time :str):
-    path = 'results/' + istance_name 
+    path = 'results_test_2/' + istance_name 
     value   ='istance: '+ istance_name +  '  bc: ' + str(bc) +'  mean: ' + str(mean) +'  std: '+ str(std) + '  stime: ' + time
     if not os.path.exists(path):
         os.makedirs(path)
@@ -92,7 +124,7 @@ def saveRuns(istance_name:str, bc:int, mean:float,std:float,time :str):
     file.writelines(value)
 
 def saveGraph(istance_name:str,run:int):
-    path = 'results/' + istance_name
+    path = 'results_test_2/' + istance_name
     if not os.path.exists(path):
             os.makedirs(path)
     pathfile = path  + '.png'
