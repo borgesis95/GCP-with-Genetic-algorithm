@@ -1,1 +1,1 @@
-istance: DSJC125.5.col  bc: 30  mean: 34.0  std: 1.9493588689617927  stime: 4 hours, 23 minutes and 9.87 seconds
+istance: DSJC125.5.col  bc: 27  mean: 28.5  std: 0.806225774829855  stime: 2 hours, 1 minute and 37.62 seconds
