@@ -1,1 +1,0 @@
-istance: myciel3.col  bc: 4  mean: 4.0  std: 0.0  stime: 3.69 secondsistance: myciel3.col  bc: 4  mean: 4.0  std: 0.0  stime: 1 minute and 22.21 seconds
