@@ -1,0 +1,1 @@
+istance: le450_15c.col  bc: 57  mean: 60.4  std: 2.2891046284519194  stime: 8 hours, 54 minutes and 13.37 seconds
