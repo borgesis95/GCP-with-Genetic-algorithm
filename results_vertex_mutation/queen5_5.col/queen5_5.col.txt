@@ -1,0 +1,1 @@
+istance: queen5_5.col  bc: 5  mean: 5.0  std: 0.0  stime: 24 minutes and 59.16 seconds

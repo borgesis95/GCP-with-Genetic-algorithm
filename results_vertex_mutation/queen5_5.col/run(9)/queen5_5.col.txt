@@ -1,0 +1,6 @@
+ solution: [11, 17, 25, 14, 16, 25, 14, 16, 11, 17, 16, 11, 17, 25, 14, 17, 25, 14, 16, 11, 14, 16, 11, 17, 25]
+ starting color: 16
+ n_colors: 5
+ mean: 21.35
+ std: 17.10168120390507
+ execution time: 2 minutes and 27.54 seconds

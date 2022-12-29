@@ -1,11 +1,15 @@
-from Utils import translate_dimacs_graph,colors
+from Utils import translate_dimacs_graph,colors,saveGraph,saveRuns
 from Genetic import Genetic
 from Graph import Graph
 import networkx as nx
+from config import PATHNAME,RUNS,PATHS,BASE
 import matplotlib.pyplot as plt
-from config import PATHNAME,COLOR_NUMBER
+from numpy import unique
+import numpy as np
+from humanfriendly import format_timespan
+import time
 
-def getGraphDegree(graph : Graph):
+def getUpperBound(graph : Graph):
      max_degree = 0
      for vertex in graph.vertices:
           vertex_degree = len(vertex.neighbors)
@@ -14,44 +18,72 @@ def getGraphDegree(graph : Graph):
      return max_degree
 
 
+def drawGraph(solution):
+     
+     colored_sol = []
+     colors_created = colors(graph.number_of_vertex)
+     for i,element in enumerate(solution):
+          colored_sol.append(colors_created[element-1])
+     nx.draw(graph.nx,node_color = colored_sol, with_labels = True)
+     saveGraph(path,run=run)
 
-if __name__ =='__main__':
-     graph = translate_dimacs_graph(pathname=PATHNAME)
-     start_color_size = getGraphDegree(graph)
-     print("degree:",start_color_size)
+def calculation(solutions) :
 
-     ga = Genetic(graph,colorSize=start_color_size)
-     # ga.run()
-     # pop = ga.generatePopulation()
-     stop = False
-     count = 10
-     best_sol = []
-     lower_bound =  int(start_color_size/4) 
-     # lower_bound = 5 
+     colors = []
+     mean_colors = 0
+     best_color = 0
+     sum_colors = 0
 
-     print("LOWER BOUND",lower_bound)
-     while(ga.colorSize >= lower_bound):
-          ga.population = []
-          bs,isValid = ga.run()
+     for index,individual in enumerate(solutions):
+          len_colors = len(unique(individual.solution))
+          sum_colors = sum_colors + len_colors
+          colors.append(len_colors)
+     
+     mean_colors = sum_colors / RUNS
+     best_color = min(colors)
+     std = np.std([i for i in colors])
 
-          if(isValid == True):
-               best_sol = bs
-               if(ga.colorSize >= lower_bound ):
-                    ga.colorSize = ga.colorSize-1
-          if(isValid == False):
-               break
-               
+     return best_color,mean_colors,std
+
+
      
 
-     print("la soluzione trovata ha un numero di colori pari a ",ga.colorSize)
-     colors = colors(graph.number_of_vertex)
-     if(best_sol == []):
-          print("Non è stata trovata nessuna soluzione!")
-     else:
-          colored_sol = []
-          for i,element in enumerate(best_sol.solution):
-               # print("node: " ,i+1, "as color:", colors[element-1])
-               colored_sol.append(colors[element-1])
-          nx.draw(graph.nx,node_color = colored_sol, with_labels = True)
-          plt.show()
+if __name__ =='__main__':
+
+     seeds = [4135, 3359, 2427, 6179, 8757, 6312, 3212, 5432, 6510, 7436]
+
+     for graphPath  in PATHS:
+          newPath = BASE + graphPath
+          best_sol = []
+          graph = translate_dimacs_graph(pathname=newPath)
+          start_color_size = getUpperBound(graph)
+          ga = Genetic(graph,colorSize=start_color_size)
+          path= newPath.split('/')[2] 
+
+
+          solutions_runs = []
+          t_inizial = time.time()
+
+          for run in range(RUNS):
+               best_sol = []
+               isValid = False
+               best_sol,isValid = ga.run(path_name=path,run=run,color_size=start_color_size,seed=seeds[run])
+               if(best_sol.solution == None and isValid == False):
+                    print("Non è stata trovata nessuna soluzione!")
+               else:
+                    solutions_runs.append(best_sol)
+     
+          t_final = time.time()
+          total_time = t_final - t_inizial
+          time_formatted=format_timespan(total_time)
+
+          best_color,mean,std = calculation(solutions_runs)
+          saveRuns(path,best_color,mean,std,time_formatted)
+          best_runs = min(solutions_runs, key = lambda i :i.fitness)
+
+          drawGraph(best_runs.solution)
+
+   
+    
+          
    

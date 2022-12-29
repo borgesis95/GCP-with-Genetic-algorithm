@@ -1,0 +1,6 @@
+ solution: [16, 23, 8, 4, 2, 4, 2, 16, 23, 8, 23, 8, 4, 2, 16, 2, 16, 23, 8, 4, 8, 4, 2, 16, 23]
+ starting color: 16
+ n_colors: 5
+ mean: 23.2
+ std: 19.188017094009478
+ execution time: 2 minutes and 34.69 seconds

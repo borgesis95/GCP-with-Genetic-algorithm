@@ -1,0 +1,1 @@
+istance: queen6_6.col  bc: 8  mean: 9.1  std: 0.7  stime: 41 minutes and 48.87 seconds

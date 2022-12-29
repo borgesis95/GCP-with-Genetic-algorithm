@@ -1,0 +1,6 @@
+ solution: [14, 3, 12, 8, 1, 8, 1, 14, 3, 12, 3, 12, 8, 1, 14, 1, 14, 3, 12, 8, 12, 8, 1, 14, 3]
+ starting color: 16
+ n_colors: 5
+ mean: 29.62
+ std: 22.163835408159844
+ execution time: 2 minutes and 26.33 seconds

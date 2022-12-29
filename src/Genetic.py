@@ -1,15 +1,24 @@
-from Graph import Graph,Vertex
+from Graph import Graph
 from Individual import Individual
 import random
 import numpy as np
-from Utils import fitness
-from config import POPULATION_SIZE,TOUR_SIZE,SELECTION_MODE,CROSS_PROBABILITY,MUTATION_PROBABILITY,REPLACEMENT_PROBABILITY, MAX_NUM_VALUTATIONS,CROSSOVER_TYPE,COLOR_NUMBER
+from numpy import unique
+from Utils import fitness,randomMutation,edgesMutation,save,newEdgeMutation
+from torch.utils.tensorboard import SummaryWriter
+from os.path import join
+from config import MUTATION_TYPE,POPULATION_SIZE,TOUR_SIZE,SELECTION_MODE,CROSS_PROBABILITY,MUTATION_PROBABILITY,\
+REPLACEMENT_PROBABILITY,MEAN_THRESHOLD, MAX_NUM_VALUTATIONS,CROSSOVER_TYPE,LOGDIR,SECOND_MUT_PROBABILITY
+import sys
+import time
+from humanfriendly import format_timespan
+import copy
+
 class Genetic:
     def __init__(self, graph:Graph,colorSize :int):
         self.graph = graph
         self.population = []
         self.stop = False
-        self.colorSize = colorSize
+        self.colorUpperbound = colorSize
 
 
     def generatePopulation(self):
@@ -17,7 +26,7 @@ class Genetic:
         random.seed()
         count = 0
         while len(self.population) < POPULATION_SIZE:
-            colors = [ i+1 for i in range(self.colorSize)]
+            colors = [ i+1 for i in range(self.colorUpperbound)]
             sol = []
             for i in range (len(vertex)):
                 color = random.choice(colors)
@@ -33,26 +42,51 @@ class Genetic:
         return self.population
     
                 
-    def isColoringValid(self,individual):
-         edges = self.graph.edges
-         return all(self.color(u, individual) != self.color(v, individual)  for u, v in edges)
+    # def isColoringValid(self,individual):
+    #      edges = self.graph.edges
+    #      return all(self.color(u, individual) != self.color(v, individual)  for u, v in edges)
 
-    def color(self,vertex,individual):
-        for index,c in enumerate(individual):
-            if vertex == index + 1:
-                return c
+    # def color(self,vertex,individual):
+    #     for index,c in enumerate(individual):
+    #         if vertex == index + 1:
+    #             return c
 
-    def run(self,):
-        print("RUN numero")
+    def isValid(self,individual):
+        edges = self.graph.edges
+        count = 0
+        for u,v in edges:
+            if(individual[u-1] == individual[v-1]):
+                count = count + 1
+        
+        return True if count == 0 else False
+        
+
+    def run(self,path_name : str,run:int,color_size,seed : int):
+
+
+        #Allow to set diff seed   
+        self.population = []
+
+        random.seed(seed)
+        self.colorUpperbound = color_size
+        t_inizial = time.time()
+        summary_path = join(LOGDIR,path_name,'run('+str(run)+')')
+        writer = SummaryWriter(summary_path)
+        
         self.generatePopulation()
         instance_t = 0
         fitness_counter = 0
-        absolute_best_solution  = 0
+        self.stop = False
+        absolute_best_solution  = Individual()
+        best_solution = Individual()
 
+        absolute_best_solution.fitness = sys.maxsize
+        best_solution.fitness = sys.maxsize
+        actualColor = self.colorUpperbound       
         while(not self.stop):
             population_t = []
             instance_t = instance_t + 1
-
+            
             for _ in range(int(POPULATION_SIZE / 2)):
                     if(SELECTION_MODE =='roulette'):    
                         # --------------------------------------------------------------------------
@@ -70,6 +104,7 @@ class Genetic:
                         # --------------------------------------------------------------------------
                         a = min(random.sample(self.population, TOUR_SIZE), key = lambda i :i.fitness)
                         b = min(random.sample(self.population, TOUR_SIZE), key = lambda i: i.fitness)
+
                         a.fitness = fitness(self.graph,a.solution)
                         b.fitness = fitness(self.graph,a.solution)
 
@@ -78,7 +113,6 @@ class Genetic:
                         # Random Selection: choose two random parents from the population.
                         # --------------------------------------------------------------------------
                         a, b = random.sample(self.population, 2)
-                        
                         a.fitness = fitness(self.graph,a.solution)
                         b.fitness = fitness(self.graph,a.solution)
 
@@ -114,21 +148,24 @@ class Genetic:
                     # ------------------------------------------------------------------------------
                     # Mutation
                     # ------------------------------------------------------------------------------
+            
+                    if (random.random() <=MUTATION_PROBABILITY):
+                        c = newEdgeMutation(c,self.graph)
+                        # c=  edgesMutation(c,VERTEX_NUMBER,self.graph) if MUTATION_TYPE =='edge'  else randomMutation(c,VERTEX_NUMBER)
+                      
 
                     if (random.random() <=MUTATION_PROBABILITY):
-                        pos = random.randint(0,VERTEX_NUMBER -1)
-                        c.solution[pos] = random.randint(1,self.colorSize)
+                        d= newEdgeMutation(d,self.graph)
+                        # d=  edgesMutation(d,VERTEX_NUMBER,self.graph) if MUTATION_TYPE =='edge'  else randomMutation(d,VERTEX_NUMBER)
+                      
 
-                    if (random.random() <=MUTATION_PROBABILITY):
-                        pos = random.randint(0,VERTEX_NUMBER -1)
-                        d.solution[pos] = random.randint(1,self.colorSize)
-
+                    c.fitness = fitness(self.graph,c.solution)
+                    d.fitness = fitness(self.graph,d.solution)
+                    
                     population_t.append(c)
                     population_t.append(d)
-                    fitness_counter+=1
+                    fitness_counter+=2
                     
-    
-
             # ------------------------------------------------------------------------------
             # Generational Selection: the offspring population replaces the current
             # population.
@@ -142,27 +179,43 @@ class Genetic:
             mean_fitness = sum([i.fitness for i in self.population]) / POPULATION_SIZE
             std_fitness = np.std([i.fitness for i in self.population])
             best_fitness = min([i.fitness for i in self.population]) 
+
+            # ---- Print graph -----
+            print('counter: {0}\t population best fitness: {1}\t mean fitness:{2:.2f}\t std :{3:.1f}\t'.format(fitness_counter, best_fitness, mean_fitness, std_fitness))
+            best_solution = sorted(self.population, key = lambda i:  (i.fitness),  reverse=False)[0]
             
+            
+            isColoringValid = self.isValid(best_solution.solution)
+            colorsNumb = len(unique(best_solution.solution))
 
-            print('{0}\t {0}\t{1}\t{2:.3f}\t{3:.3f}'.format(fitness_counter,instance_t, best_fitness, mean_fitness, std_fitness))
-
-            best_solution = sorted(self.population, key = lambda i: i.fitness, reverse=False)[0]
-            if(best_solution.fitness == 0) :    
-                print("Trovata soluzione con numero di colori pari a :",self.colorSize)
-                print("solution",best_solution.solution)  
-                return (best_solution,True)
-
-            if best_solution.fitness < absolute_best_solution:
-                absolute_best_solution = best_solution.fitness
-                evaluations = fitness_counter
-
+            if best_solution.fitness < absolute_best_solution.fitness and isColoringValid  and colorsNumb <= actualColor:
+                absolute_best_solution = copy.deepcopy(best_solution)
+                writer.add_scalar('colors/',actualColor, global_step=fitness_counter)
+                actualColor = actualColor - 1
+            
             if(fitness_counter > MAX_NUM_VALUTATIONS):
-                print("stop qui",fitness_counter)
                 self.stop = True
-                return(-1,False)
-             
-            # print("iteration: ",instance_t, " - The best solution is finded at", evaluations, "is:", absolute_best_solution.solution,"with fitness: ",absolute_best_solution.fitness)
-        return absolute_best_solution
+       
+
+        t_final = time.time()
+        total_time = t_final - t_inizial
+        isSolutionValid = self.isValid(absolute_best_solution.solution) 
+        if(absolute_best_solution.solution != None):
+            if(isSolutionValid):
+                colorFinal  = len(unique(absolute_best_solution.solution))
+                writer.add_scalar('colors/',colorFinal, global_step=fitness_counter)
+                print("iteration: ",instance_t, " - The best solution is finded at", "is:", absolute_best_solution.solution,"with fitness: ",absolute_best_solution.fitness,"color: ",len(unique(absolute_best_solution.solution)))
+                print("execution time of run ", str(run),": ",format_timespan(total_time))
+                info = [" solution: " , str(absolute_best_solution.solution),
+                    "\n starting color: ", str(self.colorUpperbound),
+                    "\n n_colors: ", str(len(unique(absolute_best_solution.solution))),
+                    "\n mean: " , str(mean_fitness),
+                    "\n std: ", str(std_fitness),
+                    "\n execution time: ", format_timespan(total_time)]
+                save(path_name,run,info)
+      
+        
+        return absolute_best_solution,True
 
                 
 
