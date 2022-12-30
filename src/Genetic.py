@@ -7,7 +7,7 @@ from Utils import fitness,randomMutation,edgesMutation,save,newEdgeMutation
 from torch.utils.tensorboard import SummaryWriter
 from os.path import join
 from config import MUTATION_TYPE,POPULATION_SIZE,TOUR_SIZE,SELECTION_MODE,CROSS_PROBABILITY,MUTATION_PROBABILITY,\
-REPLACEMENT_PROBABILITY,MEAN_THRESHOLD, MAX_NUM_VALUTATIONS,CROSSOVER_TYPE,LOGDIR,SECOND_MUT_PROBABILITY
+REPLACEMENT_PROBABILITY,MEAN_THRESHOLD, MAX_NUM_VALUTATIONS,CROSSOVER_TYPE,LOGDIR
 import sys
 import time
 from humanfriendly import format_timespan
