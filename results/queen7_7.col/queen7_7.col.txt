@@ -1,0 +1,1 @@
+istance: queen7_7.col  bc: 10  mean: 10.0  std: 0.0  stime: 1 hour, 1 minute and 37.14 secondsistance: queen7_7.col  bc: 10  mean: 10.0  std: 0.0  stime: 53 minutes and 13.64 seconds

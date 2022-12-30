@@ -1,7 +1,7 @@
 
 PATHNAME ='./instances/queen5_5.col'
 BASE = './instances/'
-PATHS = ['DSJC125.9-2.col']
+PATHS = ['DSJC125.9.col']
 POPULATION_SIZE = 100
 # Tournament size
 TOUR_SIZE = 20
@@ -14,7 +14,7 @@ MEAN_THRESHOLD  = 10
 #Replacement U + lambda probability
 REPLACEMENT_PROBABILITY = 0.2
 
-MAX_NUM_VALUTATIONS = 10*(10**5)
+MAX_NUM_VALUTATIONS = 10*(10**6)
 
 RUNS = 10
 # Value that allow user to select selection's type between : Tournament,Random and Roulette
